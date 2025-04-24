@@ -16,19 +16,26 @@ class MethodChannelStorekit2 extends Storekit2Platform {
     methodChannel.setMethodCallHandler(_handleMethod);
   }
 
-  final _transactionController = StreamController<Map<String, dynamic>>.broadcast();
+  final _transactionController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   @override
   Future<List<Product>> getProducts(List<String> productIds) async {
-    var result = await methodChannel.invokeMethod('getProducts', {'productIds': productIds});
-    return List<dynamic>.from(result).map((e) => Product.fromMap(Map<String, dynamic>.from(e as Map))).toList();
+    var result = await methodChannel
+        .invokeMethod('getProducts', {'productIds': productIds});
+    return List<dynamic>.from(result)
+        .map((e) => Product.fromMap(Map<String, dynamic>.from(e as Map)))
+        .toList();
   }
 
   @override
   Future<Transaction?> purchase(String productId) async {
-    final result = await methodChannel.invokeMethod('purchase', {'productId': productId});
+    final result =
+        await methodChannel.invokeMethod('purchase', {'productId': productId});
     // debugPrint('result: $result');
-    return result != null ? Transaction.fromMap(Map<String, dynamic>.from(result)) : null;
+    return result != null
+        ? Transaction.fromMap(Map<String, dynamic>.from(result))
+        : null;
   }
 
   @override
@@ -39,12 +46,14 @@ class MethodChannelStorekit2 extends Storekit2Platform {
   }
 
   @override
-  Stream<Map<String, dynamic>> get transactionUpdates => _transactionController.stream;
+  Stream<Map<String, dynamic>> get transactionUpdates =>
+      _transactionController.stream;
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'onTransactionUpdate':
-        final Map<String, dynamic> transactionInfo = Map<String, dynamic>.from(call.arguments);
+        final Map<String, dynamic> transactionInfo =
+            Map<String, dynamic>.from(call.arguments);
         _transactionController.add(transactionInfo);
         break;
       default:
@@ -65,12 +74,15 @@ class MethodChannelStorekit2 extends Storekit2Platform {
       return [];
     }
 
-    return List<dynamic>.from(result).map((e) => Transaction.fromMap(e)).toList();
+    return List<dynamic>.from(result)
+        .map((e) => Transaction.fromMap(e))
+        .toList();
   }
 
   @override
   Future<List<Status>> getSubscriptionStatus(String groupId) async {
-    var result = await methodChannel.invokeMethod('getSubscriptionStatus', {'groupId': groupId});
+    var result = await methodChannel
+        .invokeMethod('getSubscriptionStatus', {'groupId': groupId});
     if (result == null) {
       return [];
     }
@@ -79,6 +91,4 @@ class MethodChannelStorekit2 extends Storekit2Platform {
     // 返回的是String，需要转换为枚举类型
     return List<dynamic>.from(result).map((e) => Status.fromMap(e)).toList();
   }
-
-
 }

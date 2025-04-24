@@ -1,4 +1,14 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "E8BE4D16",
   "nonRenewingSubscriptions" : [
     {
@@ -197,7 +207,10 @@
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Standard",
           "subscriptionGroupID" : "3F19ED53",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -222,7 +235,10 @@
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Premium",
           "subscriptionGroupID" : "3F19ED53",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -252,13 +268,16 @@
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Pro",
           "subscriptionGroupID" : "3F19ED53",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         }
       ]
     }
   ],
   "version" : {
-    "major" : 3,
+    "major" : 4,
     "minor" : 0
   }
 }

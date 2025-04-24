@@ -86,26 +86,23 @@ public class Storekit2Plugin: NSObject, FlutterPlugin {
                 guard let product = products.first else {
                     throw StoreError.productNotFound
                 }
-                let transaction = try await purchaseProduct(product)
-                result(transaction?.toMap())
+                
+                let purchaseResult = try await product.purchase()
+                
+                switch purchaseResult {
+                case .success(let verification):
+                    let transaction = try checkVerified(verification)
+                    await transaction.finish()
+                    let jwsRepresentation = verification.jwsRepresentation
+                    var transactionMap = transaction.toMap()
+                    transactionMap["jwsRepresentation"] = jwsRepresentation
+                    result(transactionMap)
+                default:
+                    throw StoreError.failedVerification
+                }
             } catch {
                 handleError(error, result: result)
             }
-        }
-    }
-    
-    private func purchaseProduct(_ product: Product) async throws -> Transaction? {
-        let result = try await product.purchase()
-        
-        switch result {
-        case .success(let verification):
-            let transaction = try checkVerified(verification)
-            await transaction.finish()
-            return transaction
-        case .userCancelled, .pending:
-            return nil
-        default:
-            return nil
         }
     }
     
@@ -132,7 +129,8 @@ public class Storekit2Plugin: NSObject, FlutterPlugin {
         for await result in Transaction.currentEntitlements {
             do {
                 let transaction = try checkVerified(result)
-                let item: [String: Any?] = transaction.toMap()
+                var item = transaction.toMap()
+                item["jwsRepresentation"] = result.jwsRepresentation
                 entitlements.append(item)
             } catch {
                 print("Failed to verify transaction: \(error)")
@@ -179,7 +177,9 @@ public class Storekit2Plugin: NSObject, FlutterPlugin {
                     await transaction.finish()
                     
                     // 通知 Flutter 端有新的交易
-                    self.notifyTransactionUpdate(transaction)
+                    var transactionMap = transaction.toMap()
+                    transactionMap["jwsRepresentation"] = result.jwsRepresentation
+                    self.notifyTransactionUpdate(transactionMap)
                 } catch {
                     print("Transaction failed verification")
                 }
@@ -191,9 +191,9 @@ public class Storekit2Plugin: NSObject, FlutterPlugin {
         transactionListenerTask = listenForTransactions()
     }
     
-    private func notifyTransactionUpdate(_ transaction: Transaction) {
+    private func notifyTransactionUpdate(_ transactionMap: [String: Any?]) {
         DispatchQueue.main.async {
-            self.channel.invokeMethod("onTransactionUpdate", arguments: transaction.toMap())
+            self.channel.invokeMethod("onTransactionUpdate", arguments: transactionMap)
         }
     }
     

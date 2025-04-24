@@ -77,6 +77,9 @@ class Transaction {
   /// be the token provided. If no token was provided, this will be `nil`.
   final String? appAccountToken;
 
+  /// JWS representation of the transaction for server-side verification
+  final String? jwsRepresentation;
+
   Transaction({
     required this.id,
     required this.originalID,
@@ -93,6 +96,7 @@ class Transaction {
     this.revocationReason,
     required this.productType,
     this.appAccountToken,
+    this.jwsRepresentation,
   });
 
   factory Transaction.fromMap(Map<dynamic, dynamic> map) {
@@ -112,6 +116,7 @@ class Transaction {
       revocationReason: map['revocationReason'],
       productType: map['productType'],
       appAccountToken: map['appAccountToken'],
+      jwsRepresentation: map['jwsRepresentation'],
     );
   }
 
@@ -132,6 +137,7 @@ class Transaction {
       'revocationReason': revocationReason,
       'productType': productType,
       'appAccountToken': appAccountToken,
+      'jwsRepresentation': jwsRepresentation,
     };
   }
 }

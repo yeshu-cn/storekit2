@@ -14,7 +14,7 @@ iOS StoreKit 2 Flutter Plugin
 
 ## 说明
 1. Transaction, RenewalInfo等等这些类并没有返回iOS平台完整的字段，有些字段暂时没用到，或者有些字段高于iOS 15以后才有，就没有添加。
-2. Flutter层不做Transaction的验证，在iOS层做验证，验证成功后再返回给Flutter层数据，失败根据情况返回null或者错误信息。
+2. 在iOS层会自动执行本地验证，服务端验证需要App层自己实现。
 3. iOS原生的StoreKit接口调用throw exception时会直接传递给Flutter Plugin Platform Exception, 但是Flutter插件层，没有解析和处理这个Exception, 所以如果调用插件接口的时候不try catch可能会导致程序崩溃
 
 ## StoreKit2 资料
@@ -53,3 +53,32 @@ iOS StoreKit 2 Flutter Plugin
 在您的代码中，`subscriptionGroupStatus` 被用来确定用户的订阅状态。这对于管理用户访问权限、显示适当的UI、或者决定是否提供某些功能非常有用。
 
 例如，您可以根据 `subscriptionGroupStatus` 的值来决定是显示"订阅"按钮还是"续订"按钮，或者是否允许用户访问某些仅限订阅者的内容。
+
+## 订阅变化的规则
+变化类型 | 生效时间 | 自动行为
+升级 | ✅ 立即生效 | 旧订阅结束，折算新订阅
+降级 | ⏳ 到期后生效 | 当前周期结束后自动切换
+横向切换 | ⏳ 到期后生效 | 当前周期结束后自动切换
+自动续费 | ✅ 每期自动续 | 到期前一天自动尝试扣费
+
+## transactionId和originalTransactionId
+行为 | transactionId | originalTransactionId
+原订阅（第一次） | 10000000001 | 10000000001
+续订1 | 10000000002 | 10000000001
+用户取消，订阅结束 | — | —
+重新订阅（例如5月） | 10000000010 | 10000000010
+续订2（6月） | 10000000011 | 10000000010
+
+* transactionId：每一笔交易都不一样，就像“订单号”
+* originalTransactionId：同一生命周期用一个，就像“会员卡号”
+
+
+
+
+
+## 服务端验证
+* https://developer.apple.com/documentation/appstoreserverapi
+* 如何创建下载密钥：https://developer.apple.com/documentation/appstoreserverapi/creating-api-keys-to-authorize-api-requests
+* 如何利用密钥创建jwt token:https://developer.apple.com/documentation/appstoreserverapi/generating-json-web-tokens-for-api-requests
+
+1. 在 App Store Connect 中创建一个 App Store Server API 密钥
