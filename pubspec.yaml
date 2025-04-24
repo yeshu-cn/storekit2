@@ -1,7 +1,7 @@
 name: storekit2
-description: "A new Flutter plugin project."
+description: "iOS storekit 2 plugin for Flutter"
 version: 0.0.1
-homepage:
+homepage: https://github.com/yeshu-cn/storekit2
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -67,3 +67,5 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+
+# publish_to: https://pub.dartlang.org

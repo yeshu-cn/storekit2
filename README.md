@@ -82,3 +82,7 @@ iOS StoreKit 2 Flutter Plugin
 * 如何利用密钥创建jwt token:https://developer.apple.com/documentation/appstoreserverapi/generating-json-web-tokens-for-api-requests
 
 1. 在 App Store Connect 中创建一个 App Store Server API 密钥
+
+## 发布命令
+dart pub publish --server=https://pub.dartlang.org
+
