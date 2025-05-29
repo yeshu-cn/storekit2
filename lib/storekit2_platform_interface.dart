@@ -33,7 +33,7 @@ abstract class Storekit2Platform extends PlatformInterface {
     throw UnimplementedError('getProducts() has not been implemented.');
   }
 
-  Future<Transaction?> purchase(String productId) {
+  Future<Transaction?> purchase(String appAccountToken, String productId) {
     throw UnimplementedError('purchase() has not been implemented.');
   }
 

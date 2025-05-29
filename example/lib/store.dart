@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:storekit2/product.dart';
 import 'package:storekit2/storekit2.dart';
+import 'package:uuid/uuid.dart';
 
 class Store extends ChangeNotifier {
   List<Product> cars = [];
@@ -57,7 +58,8 @@ class Store extends ChangeNotifier {
   }
 
   Future<bool> purchaseProduct(String productId) async {
-    var transaction = await _storekit2Plugin.purchase(productId);
+    String appAccountToken = const Uuid().v4();
+    var transaction = await _storekit2Plugin.purchase(appAccountToken, productId);
     if (null == transaction) {
       debugPrint('Failed to purchase product: $productId');
       return false;

@@ -29,9 +29,9 @@ class MethodChannelStorekit2 extends Storekit2Platform {
   }
 
   @override
-  Future<Transaction?> purchase(String productId) async {
+  Future<Transaction?> purchase(String appAccountToken, String productId) async {
     final result =
-        await methodChannel.invokeMethod('purchase', {'productId': productId});
+        await methodChannel.invokeMethod('purchase', {'productId': productId, 'appAccountToken': appAccountToken});
     // debugPrint('result: $result');
     return result != null
         ? Transaction.fromMap(Map<String, dynamic>.from(result))

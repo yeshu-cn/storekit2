@@ -75,20 +75,31 @@ public class Storekit2Plugin: NSObject, FlutterPlugin {
     
     private func handlePurchase(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let args = call.arguments as? [String: Any],
-              let productId = args["productId"] as? String else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for purchase", details: nil))
+              let productId = args["productId"] as? String,
+              let appAccountTokenString = args["appAccountToken"] as? String,
+              let appAccountToken = UUID(uuidString: appAccountTokenString)
+        else {
+            result(FlutterError(
+                code: "INVALID_ARGUMENTS",
+                message: "Invalid arguments for purchase: productId and valid appAccountToken are required.",
+                details: nil
+            ))
             return
         }
-        
+
         Task {
             do {
                 let products = try await Product.products(for: [productId])
                 guard let product = products.first else {
                     throw StoreError.productNotFound
                 }
-                
-                let purchaseResult = try await product.purchase()
-                
+
+            
+                let options: Set<Product.PurchaseOption> = [
+                    .appAccountToken(appAccountToken)
+                ]
+                let purchaseResult = try await product.purchase(options: options)
+
                 switch purchaseResult {
                 case .success(let verification):
                     let transaction = try checkVerified(verification)
@@ -97,7 +108,11 @@ public class Storekit2Plugin: NSObject, FlutterPlugin {
                     var transactionMap = transaction.toMap()
                     transactionMap["jwsRepresentation"] = jwsRepresentation
                     result(transactionMap)
-                default:
+                case .userCancelled:
+                    result(nil)  // 用户取消可以自定义返回
+                case .pending:
+                    result(FlutterError(code: "PURCHASE_PENDING", message: "Purchase is pending", details: nil))
+                @unknown default:
                     throw StoreError.failedVerification
                 }
             } catch {

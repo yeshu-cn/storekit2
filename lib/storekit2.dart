@@ -12,8 +12,8 @@ class Storekit2 {
     return await Storekit2Platform.instance.getProducts(productIds);
   }
 
-  Future<Transaction?> purchase(String productId) async {
-    return await Storekit2Platform.instance.purchase(productId);
+  Future<Transaction?> purchase(String appAccountToken, String productId) async {
+    return await Storekit2Platform.instance.purchase(appAccountToken, productId);
   }
 
   Future<bool> restore() async {

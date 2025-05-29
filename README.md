@@ -55,11 +55,7 @@ iOS StoreKit 2 Flutter Plugin
 例如，您可以根据 `subscriptionGroupStatus` 的值来决定是显示"订阅"按钮还是"续订"按钮，或者是否允许用户访问某些仅限订阅者的内容。
 
 ## 订阅变化的规则
-变化类型 | 生效时间 | 自动行为
-升级 | ✅ 立即生效 | 旧订阅结束，折算新订阅
-降级 | ⏳ 到期后生效 | 当前周期结束后自动切换
-横向切换 | ⏳ 到期后生效 | 当前周期结束后自动切换
-自动续费 | ✅ 每期自动续 | 到期前一天自动尝试扣费
+* https://developer.apple.com/app-store/subscriptions/#creating-subscriptions
 
 ## transactionId和originalTransactionId
 行为 | transactionId | originalTransactionId
